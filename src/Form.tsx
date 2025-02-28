@@ -5,6 +5,8 @@ import {
   useForm,
   useFormContext,
 } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+// import * as yup from 'yup';
 import NumberField from './components/NumberField';
 import TextField from './components/TextField';
 import CheckboxField from './components/CheckboxField';
@@ -131,14 +133,25 @@ function renderFields([name, fieldProps]: [string, Field]) {
   return <div>Unknown type</div>;
 }
 
-export function Form({ fields, onSubmit }: FormProps) {
-  const form = useForm();
+export function Form({ fields, onSubmit, validationSchema }: FormProps) {
+  const form = useForm({
+    resolver: validationSchema ? yupResolver(validationSchema) : undefined,
+    defaultValues: Object.entries(fields).reduce((acc, [key, field]) => {
+      if ('defaultValue' in field) {
+        acc[key] = field.defaultValue;
+      } else if ('defaultChecked' in field) {
+        acc[key] = field.defaultChecked;
+      } else {
+        acc[key] = appendDefaults[field.type];
+      }
+      return acc;
+    }, {} as Record<string, any>),
+  });
 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {Object.entries(fields).map(renderFields)}
-
         <button type="submit">Save</button>
       </form>
     </FormProvider>

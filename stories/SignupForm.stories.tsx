@@ -1,6 +1,20 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Form, FormProps } from '../src';
+import * as yup from 'yup';
+
+const validationSchema = yup.object({
+  firstName: yup.string().required('First name is required'),
+  lastName: yup.string().required('Last name is required'),
+  email: yup
+    .string()
+    .required('Email is required')
+    .email('Please enter a valid email'),
+  comments: yup
+    .string()
+    .min(10, 'Comments must be at least 10 characters')
+    .max(15, 'Comments must be less than 15 characters')
+});
 
 const meta: Meta = {
   title: 'SignupForm',
@@ -19,7 +33,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: Story<FormProps> = (args) => <Form {...args} />;
+const Template: Story<FormProps> = args => <Form {...args} />;
 
 export const SignupForm = Template.bind({});
 
@@ -111,7 +125,8 @@ const fields: FormProps['fields'] = {
 
 SignupForm.args = {
   fields,
-  onSubmit: (values) => {
+  validationSchema,
+  onSubmit: values => {
     console.log('values', values);
   },
 };

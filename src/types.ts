@@ -126,4 +126,5 @@ type Fields = Record<string, Field>;
 export interface FormProps {
   fields: Fields;
   onSubmit: SubmitHandler<FieldValues>;
+  validationSchema?: any;
 }

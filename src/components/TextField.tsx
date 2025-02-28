@@ -5,9 +5,12 @@ import { TextFieldProps } from '../types';
 function TextField(props: TextFieldProps & { name: string }) {
   const {
     register,
-    // formState: { errors },
+    formState: { errors },
   } = useFormContext();
   const { label, name, htmlType = 'text', placeholder } = props;
+
+  // Get nested errors using lodash-like get syntax
+  const errorMessage = errors[name]?.message as string;
 
   return (
     <div>
@@ -18,10 +21,7 @@ function TextField(props: TextFieldProps & { name: string }) {
         placeholder={placeholder}
         {...register(name)}
       />
-      {/* Display error message if validation fails */}
-      {/* {errors[name] && (
-        <span style={{ color: 'red' }}>{errors[name].message}</span>
-      )} */}
+      {errorMessage && <span style={{ color: 'red' }}>{errorMessage}</span>}
     </div>
   );
 }
